@@ -1,54 +1,3 @@
-#!/usr/bin/env ruby
-
-require 'json'
-require 'nokogiri'
-require 'csv'
-
-class FleepMessage
-
-  attr_reader :data, :message_payload
-
-  def initialize(message)
-    @data = message
-    # puts message
-    @message_payload = JSON.parse(message['message'])
-  end
-
-  def timestamp
-    data['posted_time']
-  end
-
-  def p_text(p_node)
-    p_node.css('b').each { |n| n.content = "*#{n.text}*"}
-    p_node.css('i').each { |n| n.content = "_#{n.text}_"}
-    p_node.css('strong').each { |n| n.content = "*#{n.text}*"}
-    p_node.text
-  end
-
-  def text
-    doc = Nokogiri::HTML(message_payload['message'])
-    doc.css('p').map { |par| p_text(par) }.join("\n\n") + "\n\n" +
-    attachments.map(&:to_s).join("\n\n")
-  end
-
-  def type
-    data['mk_message_type']
-  end
-
-  def user_account
-    data['account_id']
-  end
-
-  def attachments
-    Array(message_payload['attachments']).map { |a| FleepAttachment.new(a) }
-  end
-
-  def to_s
-    JSON.pretty_generate(message_payload)
-  end
-
-end
-
 class FleepAttachment
 
   attr_reader :data
@@ -97,25 +46,4 @@ class FleepAttachment
   #    "width": 575,
   #    "is_animated": false
   #  }
-end
-
-
-json = JSON.parse(File.read(ARGV[0]))
-# puts json.keys
-
-contacts = {}.tap do |c|
-  json['contacts'].map { |cn| c[cn['account_id']] = cn['fleep_address'] }
-end
-# puts contacts
-
-CSV.open('slack_format.csv', 'wb') do |csv|
-  json['conversations'].each do |conv|
-    topic = conv['topic']
-    conv['messages'].each do |msg|
-      message = FleepMessage.new(msg)
-      next if message.type != "textV2"
-      csv << [message.timestamp, topic, contacts[msg['account_id']], message.text]
-    end
-  end
-
 end

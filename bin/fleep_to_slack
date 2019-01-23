@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+require 'fleep_transporter'
+
+history = FleepHistory.parse(ARGV[0])
+
+puts "Contacts: #{history.contacts.count}"
+puts "Conversations: #{history.conversations.count}"
+
+# CSV.open('slack_format.csv', 'wb') do |csv|
+#   json['conversations'].each do |conv|
+#     topic = conv['topic']
+#     conv['messages'].each do |msg|
+#       message = FleepMessage.new(msg)
+#       next if message.type != "textV2"
+#       csv << [message.timestamp, topic, contacts[msg['account_id']], message.text]
+#     end
+#   end
+#
+# end
