@@ -1,7 +1,9 @@
 require 'csv'
 require 'fortschritt'
 require 'json'
+require 'tins'
 
+require 'fleep_transporter/configuration'
 require 'fleep_transporter/fleep_attachment'
 require 'fleep_transporter/fleep_contact'
 require 'fleep_transporter/fleep_conversation'

@@ -23,4 +23,8 @@ class FleepConversation
     @members = data['members']
   end
 
+  def text_messages
+    messages.select { |m| m.text? }
+  end
+
 end

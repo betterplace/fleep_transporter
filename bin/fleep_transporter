@@ -8,15 +8,19 @@ class FleepToSlack
   attr_reader :opts, :history
 
   def initialize
-    @opts = Tins::GO.go 'scuf:o:h'
+    @opts = Tins::GO.go 'scupeif:o:h'
     opts[?h] and usage
     opts[?f] or usage
     Configuration.set(:progress, opts[?p])
+    Configuration.set(:ignore_empty, opts[?e])
+    Configuration.set(:ignore, opts[?i] || '1:1')
   end
 
   def usage
     puts "USAGE: -f INPUT_FILE [-o OUTPUT_FILE] [OPTIONS]"
     puts "-c     print channels"
+    puts "-e     ignore conversations with empty topic"
+    puts "-i     ignore conversations with this prefix [default: 1:1]"
     puts "-o     write output to file"
     puts "-s     prints stats"
     puts "-u     print users"
@@ -55,7 +59,7 @@ class FleepToSlack
   def channels
     channels = CSV.generate do |csv|
       csv << ['id', 'name', 'message_count', 'members']
-      history.conversations.each do |c|
+      history.filtered_conversations.each do |c|
         csv << [
           c.id,
           c.topic,
@@ -71,7 +75,7 @@ class FleepToSlack
   def stats
     puts "Contacts: #{history.contacts.count}"
     puts "Conversations: #{history.conversations.count}"
-    puts "Conversations:"
+    puts "Selected Conversations: #{history.filtered_conversations.count}"
     exit 0
   end
 
@@ -89,9 +93,8 @@ class FleepToSlack
 
   def convert
     CSV.generate do |csv|
-      history.conversations.each do |conversation|
-        conversation.messages.each do |message|
-          message.type == 'textV2' or next
+      history.filtered_conversations.with_fortschritt(silent: !Configuration.get(:progress)).each do |conversation|
+        conversation.fortschritt.text_messages.each do |message|
           csv << [
             message.timestamp,
             channel_name(conversation),
