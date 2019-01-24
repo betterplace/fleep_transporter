@@ -1,20 +1,104 @@
 #!/usr/bin/env ruby
 
 require 'fleep_transporter'
+require 'tins/go'
 
-history = FleepHistory.parse(ARGV[0])
+class FleepToSlack
 
-puts "Contacts: #{history.contacts.count}"
-puts "Conversations: #{history.conversations.count}"
+  attr_reader :opts, :history
 
-# CSV.open('slack_format.csv', 'wb') do |csv|
-#   json['conversations'].each do |conv|
-#     topic = conv['topic']
-#     conv['messages'].each do |msg|
-#       message = FleepMessage.new(msg)
-#       next if message.type != "textV2"
-#       csv << [message.timestamp, topic, contacts[msg['account_id']], message.text]
-#     end
-#   end
-#
-# end
+  def initialize
+    @opts = Tins::GO.go 'scuf:o:h'
+    opts[?h] and usage
+    opts[?f] or usage
+  end
+
+  def usage
+    puts "USAGE: -f INPUT_FILE [-s] [-c] [-u] [-h] [-o OUTPUT_FILE]"
+    puts "-s     prints stats"
+    puts "-c     print channels"
+    puts "-u     print users"
+    puts "-o     write output to file"
+    puts "-h     prints help"
+    exit 1
+  end
+
+  def run
+    @history = FleepHistory.parse(opts[?f])
+    opts[?s] and stats
+    opts[?c] and channels
+    opts[?u] and users
+    write convert
+  end
+
+  def write(data)
+    if opts[?o]
+      File.open(opts[?o], 'wb') { |io| io.puts data }
+    else
+      puts data
+    end
+  end
+
+  def users
+    users = CSV.generate do |csv|
+      csv << ['username', 'email']
+      history.contacts.each do |_, c|
+        csv << [c.username, c.email]
+      end
+    end
+    write users
+    exit 0
+  end
+
+  def channels
+    channels = CSV.generate do |csv|
+      csv << ['Channel name', 'message_count', 'members']
+      history.conversations.each do |c|
+        csv << [
+          c.topic == '' ? 'Unnamed' : c.topic,
+          c.messages.count,
+          conversation_members(c)
+        ]
+      end
+    end
+    write channels
+    exit 0
+  end
+
+  def stats
+    puts "Contacts: #{history.contacts.count}"
+    puts "Conversations: #{history.conversations.count}"
+    puts "Conversations:"
+    exit 0
+  end
+
+  def conversation_members(conversation)
+    conversation.members.map do |m|
+      history.contact(m).username
+    end.join(', ')
+  end
+
+
+  def channel_name(conversation)
+    conversation.topic == "" or return conversation.topic
+    "Unnamed channel by #{conversation_members(conversation)}"
+  end
+
+  def convert
+    CSV.generate do |csv|
+      history.conversations.each do |conversation|
+        conversation.messages.each do |message|
+          message.type == 'textV2' or next
+          csv << [
+            message.timestamp,
+            channel_name(conversation),
+            history.contact(message.user_account).email,
+            message.text
+          ]
+        end
+      end
+    end
+  end
+end
+
+FleepToSlack.new.run

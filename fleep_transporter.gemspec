@@ -12,8 +12,8 @@ Gem::Specification.new do |s|
   s.description = "Convert Fleep JSON history into a Slack-importabl CSV file".freeze
   s.email = "developers@betterplace.org".freeze
   s.executables = ["fleep_to_slack".freeze]
-  s.extra_rdoc_files = ["README.md".freeze, "lib/fleep_transporter.rb".freeze, "lib/fleep_transporter/fleep_attachment.rb".freeze, "lib/fleep_transporter/fleep_contact.rb".freeze, "lib/fleep_transporter/fleep_conversation.rb".freeze, "lib/fleep_transporter/fleep_history.rb".freeze, "lib/fleep_transporter/fleep_message.rb".freeze]
-  s.files = ["LICENSE".freeze, "README.md".freeze, "bin/fleep_to_slack".freeze, "convert.rb".freeze, "lib/fleep_transporter.rb".freeze, "lib/fleep_transporter/fleep_attachment.rb".freeze, "lib/fleep_transporter/fleep_contact.rb".freeze, "lib/fleep_transporter/fleep_conversation.rb".freeze, "lib/fleep_transporter/fleep_history.rb".freeze, "lib/fleep_transporter/fleep_message.rb".freeze]
+  s.extra_rdoc_files = ["README.md".freeze, "lib/fleep_transporter.rb".freeze, "lib/fleep_transporter/fleep_attachment.rb".freeze, "lib/fleep_transporter/fleep_contact.rb".freeze, "lib/fleep_transporter/fleep_conversation.rb".freeze, "lib/fleep_transporter/fleep_history.rb".freeze, "lib/fleep_transporter/fleep_message.rb".freeze, "lib/fleep_transporter/version.rb".freeze]
+  s.files = [".gitignore".freeze, "Gemfile".freeze, "LICENSE".freeze, "README.md".freeze, "Rakefile".freeze, "VERSION".freeze, "bin/fleep_to_slack".freeze, "fleep_transporter.gemspec".freeze, "history.json".freeze, "lib/fleep_transporter.rb".freeze, "lib/fleep_transporter/fleep_attachment.rb".freeze, "lib/fleep_transporter/fleep_contact.rb".freeze, "lib/fleep_transporter/fleep_conversation.rb".freeze, "lib/fleep_transporter/fleep_history.rb".freeze, "lib/fleep_transporter/fleep_message.rb".freeze, "lib/fleep_transporter/version.rb".freeze]
   s.homepage = "http://github.com/betterplace/fleep_transporter".freeze
   s.rdoc_options = ["--title".freeze, "FleepTransporter".freeze, "--main".freeze, "README.md".freeze]
   s.rubygems_version = "3.0.1".freeze

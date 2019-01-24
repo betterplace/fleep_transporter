@@ -3,7 +3,7 @@ class FleepContact
   attr_reader :data
 
   def initialize(contact)
-    @data = message
+    @data = contact
   end
 
   def id

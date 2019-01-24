@@ -6,8 +6,7 @@ class FleepMessage
 
   def initialize(message)
     @data = message
-    # puts message
-    @message_payload = JSON.parse(message['message'])
+    @message_payload = JSON.parse(message['message']) if type == 'textV2'
   end
 
   def timestamp
@@ -22,6 +21,7 @@ class FleepMessage
   end
 
   def text
+    return '' if type != 'textV2'
     doc = Nokogiri::HTML(message_payload['message'])
     doc.css('p').map { |par| p_text(par) }.join("\n\n") + "\n\n" +
     attachments.map(&:to_s).join("\n\n")

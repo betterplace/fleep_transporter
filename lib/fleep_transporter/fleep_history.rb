@@ -3,7 +3,7 @@ class FleepHistory
   attr_reader :data, :contacts, :conversations, :topics
 
   def self.parse(filename)
-    new JSON.parse(filename)
+    new JSON.parse(File.read(filename))
   end
 
   def initialize(history)
