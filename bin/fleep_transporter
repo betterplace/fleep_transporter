@@ -11,14 +11,16 @@ class FleepToSlack
     @opts = Tins::GO.go 'scuf:o:h'
     opts[?h] and usage
     opts[?f] or usage
+    Configuration.set(:progress, opts[?p])
   end
 
   def usage
-    puts "USAGE: -f INPUT_FILE [-s] [-c] [-u] [-h] [-o OUTPUT_FILE]"
-    puts "-s     prints stats"
+    puts "USAGE: -f INPUT_FILE [-o OUTPUT_FILE] [OPTIONS]"
     puts "-c     print channels"
-    puts "-u     print users"
     puts "-o     write output to file"
+    puts "-s     prints stats"
+    puts "-u     print users"
+    puts "-p     print progress indicator"
     puts "-h     prints help"
     exit 1
   end

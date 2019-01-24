@@ -15,14 +15,14 @@ GemHadar do
     '.bundle', '.byebug_history', 'errors.lst', '.yardoc'
   readme      'README.md'
   title       "#{name.camelize}"
-  executables ["fleep_to_slack"]
+  executables ["fleep_transporter"]
 
-  dependency 'tins',           '~>1.20'
+  dependency 'fortschritt',    '~>0.2'
   dependency 'json',           '~>2.1'
   dependency 'nokogiri',       '~>1.10'
+  dependency 'tins',           '~>1.20'
 
   # development_dependency 'rails'
 end
 
 task :default => :spec
-
