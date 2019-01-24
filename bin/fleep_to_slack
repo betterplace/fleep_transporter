@@ -52,10 +52,11 @@ class FleepToSlack
 
   def channels
     channels = CSV.generate do |csv|
-      csv << ['Channel name', 'message_count', 'members']
+      csv << ['id', 'name', 'message_count', 'members']
       history.conversations.each do |c|
         csv << [
-          c.topic == '' ? 'Unnamed' : c.topic,
+          c.id,
+          c.topic,
           c.messages.count,
           conversation_members(c)
         ]

@@ -15,6 +15,10 @@ class FleepConversation
     data['mk_rec_type']
   end
 
+  def id
+    data['conversation_id']
+  end
+
   def members
     @members = data['members']
   end
