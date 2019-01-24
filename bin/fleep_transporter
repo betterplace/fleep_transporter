@@ -8,7 +8,7 @@ class FleepToSlack
   attr_reader :opts, :history
 
   def initialize
-    @opts = Tins::GO.go 'scupeif:o:h'
+    @opts = Tins::GO.go 'cesupi:f:o:h'
     opts[?h] and usage
     opts[?f] or usage
     Configuration.set(:progress, opts[?p])
@@ -19,8 +19,8 @@ class FleepToSlack
   def usage
     puts "USAGE: -f INPUT_FILE [-o OUTPUT_FILE] [OPTIONS]"
     puts "-c     print channels"
-    puts "-e     ignore conversations with empty topic"
-    puts "-i     ignore conversations with this prefix [default: 1:1]"
+    puts "-e     ignore conversations with no topic"
+    puts "-i     ignore channels with topic starting with [default: 1:1]"
     puts "-o     write output to file"
     puts "-s     prints stats"
     puts "-u     print users"
@@ -75,7 +75,7 @@ class FleepToSlack
   def stats
     puts "Contacts: #{history.contacts.count}"
     puts "Conversations: #{history.conversations.count}"
-    puts "Selected Conversations: #{history.filtered_conversations.count}"
+    puts "Filtered Conversations: #{history.filtered_conversations.count}"
     exit 0
   end
 
