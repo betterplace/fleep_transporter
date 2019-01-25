@@ -4,7 +4,7 @@ class FleepConversation
 
   def initialize(conv)
     @data = conv
-    @messages = conv['messages'].map { |m| FleepMessage.new(m) }
+    @messages = conv['messages'].map { |m| FleepMessage.new(m, self) }
   end
 
   def topic

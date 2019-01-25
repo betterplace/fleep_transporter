@@ -1,20 +1,41 @@
 class FleepAttachment
 
-  attr_reader :data
+  attr_reader :data, :message
 
-  def initialize(attachment)
+  def initialize(attachment, message)
     @data = attachment
+    @message = message
   end
 
-  def to_s
-    if !data['title'] || data['title'] == ''
-      return "> *Fleep attachment could not be copied over: #{data['file_url']}*"
+  def as_text
+    internal? ? internal_attachment : external_attachment
+  end
+
+  def internal_attachment
+    if prefix = Configuration.get(:url_prefix)
+      filename = File.basename(file_url)
+      topic = URI.encode(message.conversation_topic)
+      result = "> *Fleep attachment:* #{filename}"
+      result += "> #{prefix}/#{topic}/#{filename}"
+    else
+      "> *Fleep attachment could not be copied over: #{file_url}*"
     end
+  end
+
+  def external_attachment
     result = ''
     result += "> *#{data['title']}*\n>\n"
     result += "> #{data['description']}\n" if data['description'] && data['description'] != ''
     result += "> #{data['attached_url']}" if data['attached_url'] && data['attached_url'] != ''
     result
+  end
+
+  def internal?
+    !data['title'] || data['title'] == ''
+  end
+
+  def file_url
+    data['file_url']
   end
 
   # Example:

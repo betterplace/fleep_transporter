@@ -8,13 +8,14 @@ class FleepToSlack
   attr_reader :opts, :history
 
   def initialize
-    @opts = Tins::GO.go 'a:cef:i:o:psuh'
+    @opts = Tins::GO.go 'a:cef:hi:o:psux:'
     opts[?h] and usage
     opts[?f] or usage
     Configuration.set(:channel_prefix, opts[?a] || '')
-    Configuration.set(:progress, opts[?p])
     Configuration.set(:ignore_empty, opts[?e])
     Configuration.set(:ignore, opts[?i] || '1:1')
+    Configuration.set(:progress, opts[?p])
+    Configuration.set(:url_prefix, opts[?x])
   end
 
   def usage
@@ -27,6 +28,7 @@ class FleepToSlack
     puts "-s     prints stats"
     puts "-u     print users"
     puts "-p     print progress indicator"
+    putx "-x     url prefix for internal files [default: empty]"
     puts "-h     prints help"
     exit 1
   end
@@ -88,25 +90,20 @@ class FleepToSlack
   end
 
 
-  def channel_name(conversation)
-    Configuration.get(:channel_prefix) + if conversation.topic == ""
-      "Conversation by #{conversation_members(conversation)}"
-    else
-      conversation.topic
-    end
+
+  def filtered_text_messages
+    history.filtered_conversations.map(&:text_messages).flatten
   end
 
   def convert
     CSV.generate do |csv|
-      history.filtered_conversations.with_fortschritt(silent: !Configuration.get(:progress)).each do |conversation|
-        conversation.fortschritt.text_messages.each do |message|
-          csv << [
-            message.timestamp,
-            channel_name(conversation),
-            history.contact(message.user_account).email,
-            message.text
-          ]
-        end
+      filtered_text_messages.with_fortschritt(silent: !Configuration.get(:progress)).each do |message|
+        csv << [
+          message.fortschritt.timestamp,
+          message.channel_name,
+          history.contact(message.user_account).email,
+          message.text
+        ]
       end
     end
   end

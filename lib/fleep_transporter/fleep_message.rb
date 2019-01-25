@@ -2,11 +2,12 @@ require 'nokogiri'
 
 class FleepMessage
 
-  attr_reader :data, :message_payload
+  attr_reader :data, :message_payload, :conversation
 
-  def initialize(message)
+  def initialize(message, conversation)
     @data = message
     @message_payload = JSON.parse(message['message']) if text?
+    @conversation = conversation
   end
 
   def timestamp
@@ -24,7 +25,19 @@ class FleepMessage
     text? or return ''
     doc = Nokogiri::HTML(message_payload['message'])
     doc.css('p').map { |par| p_text(par) }.join("\n\n") + "\n\n" +
-    attachments.map(&:to_s).join("\n\n")
+    attachments.map(&:as_text).join("\n\n")
+  end
+
+  def conversation_topic
+    conversation.topic
+  end
+
+  def channel_name
+    Configuration.get(:channel_prefix) + if conversation_topic == ""
+      "Conversation by #{conversation_members(conversation)}"
+    else
+      conversation_topic
+    end
   end
 
   def text?
@@ -40,7 +53,7 @@ class FleepMessage
   end
 
   def attachments
-    Array(message_payload['attachments']).map { |a| FleepAttachment.new(a) }
+    Array(message_payload['attachments']).map { |a| FleepAttachment.new(a, self) }
   end
 
   def to_s
