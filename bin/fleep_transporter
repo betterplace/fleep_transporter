@@ -96,15 +96,19 @@ class FleepToSlack
   end
 
   def convert
+    result_set = {}
+    filtered_text_messages.with_fortschritt(silent: !Configuration.get(:progress)).each do |message|
+      ts = message.fortschritt.timestamp
+      result_set[ts] = [
+        ts,
+        message.channel_name,
+        history.contact(message.user_account).email,
+        message.text
+      ]
+    end
+    keys = result_set.keys.sort
     CSV.generate do |csv|
-      filtered_text_messages.with_fortschritt(silent: !Configuration.get(:progress)).each do |message|
-        csv << [
-          message.fortschritt.timestamp,
-          message.channel_name,
-          history.contact(message.user_account).email,
-          message.text
-        ]
-      end
+      keys.with_fortschritt.each { |k| csv << result_set[k.fortschritt] }
     end
   end
 end
