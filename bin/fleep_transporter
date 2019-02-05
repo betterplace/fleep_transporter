@@ -28,7 +28,7 @@ class FleepToSlack
     puts "-s     prints stats"
     puts "-u     print users"
     puts "-p     print progress indicator"
-    putx "-x     url prefix for internal files [default: empty]"
+    puts "-x     url prefix for internal files [default: empty]"
     puts "-h     prints help"
     exit 1
   end
