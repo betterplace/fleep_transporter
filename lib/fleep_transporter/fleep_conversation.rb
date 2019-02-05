@@ -20,7 +20,7 @@ class FleepConversation
   end
 
   def members
-    @members = data['members']
+    data['members']
   end
 
   def text_messages

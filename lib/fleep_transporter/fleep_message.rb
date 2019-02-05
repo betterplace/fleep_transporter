@@ -32,9 +32,13 @@ class FleepMessage
     conversation.topic
   end
 
+  def conversation_members
+    conversation.members
+  end
+
   def channel_name
     Configuration.get(:channel_prefix) + if conversation_topic == ""
-      "Conversation by #{conversation_members(conversation)}"
+      "Conversation by #{conversation_members}"
     else
       conversation_topic
     end
