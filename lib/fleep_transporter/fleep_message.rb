@@ -24,24 +24,15 @@ class FleepMessage
   def text
     text? or return ''
     doc = Nokogiri::HTML(message_payload['message'])
-    doc.css('p').map { |par| p_text(par) }.join("\n\n") + "\n\n" +
-    attachments.map(&:as_text).join("\n\n")
-  end
-
-  def conversation_topic
-    conversation.topic
-  end
-
-  def conversation_members
-    conversation.members
+    result = doc.css('p').map { |par| p_text(par) }.join("\n\n")
+    if attachments.any?
+      result += "\n\n" + attachments.map(&:as_text).join("\n\n")
+    end
+    result
   end
 
   def channel_name
-    Configuration.get(:channel_prefix) + if conversation_topic == ""
-      "Conversation by #{conversation_members}"
-    else
-      conversation_topic
-    end
+    conversation.export_topic
   end
 
   def text?

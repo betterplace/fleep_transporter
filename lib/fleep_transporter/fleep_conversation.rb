@@ -11,6 +11,18 @@ class FleepConversation
     data['topic']
   end
 
+  def topic?
+    topic && topic.strip != ''
+  end
+
+  def full_topic
+    topic? ? topic : "Conversation #{id}"
+  end
+
+  def export_topic
+    Configuration.get(:channel_prefix) + full_topic
+  end
+
   def type
     data['mk_rec_type']
   end

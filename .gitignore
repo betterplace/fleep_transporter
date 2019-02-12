@@ -12,3 +12,5 @@ coverage
 errors.lst
 pkg
 tags
+*.json
+*.csv
