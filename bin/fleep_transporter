@@ -8,7 +8,7 @@ class FleepToSlack
   attr_reader :opts, :history
 
   def initialize
-    @opts = Tins::GO.go 'a:cef:hi:o:psux:'
+    @opts = Tins::GO.go 'a:cef:hi:o:pst:ux:'
     opts[?h] and usage
     opts[?f] or usage
     Configuration.set(:channel_prefix, opts[?a] || '')
@@ -16,6 +16,7 @@ class FleepToSlack
     Configuration.set(:ignore, opts[?i] || '1:1')
     Configuration.set(:progress, opts[?p])
     Configuration.set(:url_prefix, opts[?x])
+    Configuration.set(:conversations, opts[?t])
   end
 
   def usage
@@ -26,6 +27,7 @@ class FleepToSlack
     puts "-i     ignore channels with topic starting with [default: 1:1]"
     puts "-o     write output to file"
     puts "-s     prints stats"
+    puts "-t     select conversations by id"
     puts "-u     print users"
     puts "-p     print progress indicator"
     puts "-x     url prefix for internal files [default: empty]"
@@ -85,7 +87,7 @@ class FleepToSlack
 
   def conversation_members(conversation)
     conversation.members.map do |m|
-      history.contact(m).username
+      history.contact(m).export_username
     end.join(', ')
   end
 

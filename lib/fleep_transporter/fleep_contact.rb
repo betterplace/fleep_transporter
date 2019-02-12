@@ -14,6 +14,14 @@ class FleepContact
     data['fleep_address']
   end
 
+  def username?
+    username && username.strip != ''
+  end
+
+  def export_username
+    username? ? username : email
+  end
+
   def email
     data['email']
   end

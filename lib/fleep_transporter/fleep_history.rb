@@ -28,10 +28,19 @@ class FleepHistory
     contacts[id]
   end
 
+  def selected_conversations
+    conf = Configuration.get(:conversations)
+    conf ? conf.split(',').map(&:strip) : []
+  end
+
   def filtered_conversations
     result = conversations
-    result = result.reject { |c| c.topic.start_with?(Configuration.get(:ignore)) }
-    result = result.reject { |c| c.topic == '' } if Configuration.get(:ignore_empty)
+    if (sel_conv = selected_conversations).size > 0
+      result = result.select { |c| sel_conv.include?(c.id) }
+    else
+      result = result.reject { |c| c.topic.start_with?(Configuration.get(:ignore)) }
+      result = result.reject { |c| c.topic == '' } if Configuration.get(:ignore_empty)
+    end
     result
   end
 

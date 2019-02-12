@@ -14,7 +14,7 @@ class FleepAttachment
   def internal_attachment
     if prefix = Configuration.get(:url_prefix)
       filename = File.basename(file_url)
-      topic = URI.encode(message.conversation_topic)
+      topic = URI.encode(message.channel_name)
       result = "> *Fleep attachment:* #{filename}"
       result += "> #{prefix}/#{topic}/#{filename}"
     else

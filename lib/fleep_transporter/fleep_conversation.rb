@@ -16,7 +16,7 @@ class FleepConversation
   end
 
   def full_topic
-    topic? ? topic : "Conversation #{id}"
+    (topic? ? topic : "Conversation #{id}").gsub(/[#&\/]/, '')
   end
 
   def export_topic
